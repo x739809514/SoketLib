@@ -1,0 +1,14 @@
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\bin\Debug\net7.0\NetWorkBasic.exe
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\bin\Debug\net7.0\NetWorkBasic.deps.json
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\bin\Debug\net7.0\NetWorkBasic.runtimeconfig.json
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\bin\Debug\net7.0\NetWorkBasic.dll
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\bin\Debug\net7.0\NetWorkBasic.pdb
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.GeneratedMSBuildEditorConfig.editorconfig
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.AssemblyInfoInputs.cache
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.AssemblyInfo.cs
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.csproj.CoreCompileInputs.cache
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.dll
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\refint\NetWorkBasic.dll
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.pdb
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\NetWorkBasic.genruntimeconfig.cache
+D:\A工作区\SocketLib\SocketLib\NetWorkBasic\obj\Debug\net7.0\ref\NetWorkBasic.dll
