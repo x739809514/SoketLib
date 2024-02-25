@@ -20,5 +20,8 @@ class Client
 
         string rcvMsg = Encoding.UTF8.GetString(dataRcv, 0, len);
         Console.WriteLine("Rcv Server Data: " + rcvMsg);
+
+        string msgSend = Console.ReadLine() ?? "Auto Message...";
+        socket.Send(Encoding.UTF8.GetBytes(msgSend));
     }
 }
