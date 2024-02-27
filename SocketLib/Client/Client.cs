@@ -15,13 +15,31 @@ class Client
         socket.Connect(pt);
         Console.WriteLine("Client Start...");
 
-        byte[] dataRcv = new byte[1024];
-        int len = socket.Receive(dataRcv);
+        while (true)
+        {
+            byte[] dataRcv = new byte[1024];
+            int len = socket.Receive(dataRcv);
 
-        string rcvMsg = Encoding.UTF8.GetString(dataRcv, 0, len);
-        Console.WriteLine("Rcv Server Data: " + rcvMsg);
+            string rcvMsg = Encoding.UTF8.GetString(dataRcv, 0, len);
+            Console.WriteLine("Rcv Server Data: " + rcvMsg);
 
-        string msgSend = Console.ReadLine() ?? "Auto Message...";
-        socket.Send(Encoding.UTF8.GetBytes(msgSend));
+            while (true)
+            {
+                string msgSend = Console.ReadLine();
+                if (msgSend.Length > 0)
+                {
+                    if (msgSend.Equals("quit"))
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                        socket.Close();
+                    }
+                    else
+                    {
+                        socket.Send(Encoding.UTF8.GetBytes(msgSend));
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
