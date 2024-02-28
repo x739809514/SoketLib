@@ -8,26 +8,24 @@
     "net7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Administrator\\.nuget\\packages\\": {}
+    "/Users/innovation/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\A工作区\\SocketLib\\SocketLib\\Client\\Client.csproj",
+      "projectUniqueName": "/Users/innovation/CodePlace/SocketLib/SocketLib/Client/Client.csproj",
       "projectName": "Client",
-      "projectPath": "D:\\A工作区\\SocketLib\\SocketLib\\Client\\Client.csproj",
-      "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\A工作区\\SocketLib\\SocketLib\\Client\\obj\\",
+      "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/Client/Client.csproj",
+      "packagesPath": "/Users/innovation/.nuget/packages/",
+      "outputPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/innovation/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -61,7 +59,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.400/RuntimeIdentifierGraph.json"
       }
     }
   }

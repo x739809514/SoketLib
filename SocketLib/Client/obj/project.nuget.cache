@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lKHsGLf0s/s6lhuTqQX+jaMyYBNj+tyJs4YQpvAZbqD3JxChMthDzYUUgUbr3v38FN6wAE8+K6evNYPtq3gBGQ==",
+  "dgSpecHash": "DmOrHMybV1VvEgI+VMRepX09G0IpVYhF8Ku/wsDGInTKeek/94CKV/vEyaoYQYGpA+BL/4IvS5grLDAoUWoYhg==",
   "success": true,
-  "projectFilePath": "D:\\A工作区\\SocketLib\\SocketLib\\Client\\Client.csproj",
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/Client/Client.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
