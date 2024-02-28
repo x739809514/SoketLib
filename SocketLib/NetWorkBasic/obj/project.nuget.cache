@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kA3NFOvxDQASjm4VShK5d2PfZKogAHOrUuEPSRNSfMfw7H3KzSJVZUdF+FWiEg+XgTuuNHEEFAsc1tnVZey4nw==",
+  "dgSpecHash": "TA5GdsEeaGhAwUUdr5OKCx0kI6rKKuNEuu/c4uXrazKwcZ7MxuB15BQJ1AuC/6gPmEw7QSgsp6bbW9TNdtnc6A==",
   "success": true,
-  "projectFilePath": "D:\\A工作区\\SocketLib\\SocketLib\\NetWorkBasic\\NetWorkBasic.csproj",
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/NetWorkBasic/NetWorkBasic.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
