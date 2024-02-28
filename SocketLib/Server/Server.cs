@@ -32,52 +32,76 @@ class Server
     {
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPAddress ipAddress = new IPAddress(new byte[] { 127, 0, 0, 1 });
-        EndPoint pt = new IPEndPoint(ipAddress, 12700);
-        socket.Bind(pt);
-        socket.Listen(100);
-        Console.WriteLine("Server Start...");
-
-        socket.BeginAccept(new AsyncCallback(ASyncReceive), new SocketObj() { skt = socket, str = "default" });
+        EndPoint pt = new IPEndPoint(ipAddress, 12701);
+        try
+        {
+            socket.Bind(pt);
+            socket.Listen(100);
+            Console.WriteLine("Server Start...");
+            socket.BeginAccept(new AsyncCallback(ASyncAccept), new SocketObj() { skt = socket, str = "default" });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 
-    static void ASyncReceive(IAsyncResult result)
+    static void ASyncAccept(IAsyncResult result)
     {
-        if (result.AsyncState is SocketObj args)
+        try
         {
-            Socket clientSocket = args.skt.EndAccept(result);
-            Console.WriteLine("The Receive thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
+            if (result.AsyncState is SocketObj args)
+            {
+                Socket clientSocket = args.skt.EndAccept(result);
+                Console.WriteLine("The Receive thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
 
-            string msg = "Connect Successful";
-            byte[] bytes = Encoding.UTF8.GetBytes(msg);
-            clientSocket.Send(bytes);
+                string msg = "Connect Successful";
+                byte[] bytes = Encoding.UTF8.GetBytes(msg);
+                clientSocket.Send(bytes);
 
-            byte[] dataRcv = new byte[1024];
-            clientSocket.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = clientSocket, data = dataRcv });
+                byte[] dataRcv = new byte[1024];
+                clientSocket.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = clientSocket, data = dataRcv });
 
-            // since a child thread is closed, so we need to start a new one
-            args.skt.BeginAccept(new AsyncCallback(ASyncReceive), new SocketObj() { skt = args.skt, str = "default" });
+                // since a child thread is closed, so we need to start a new one
+                args.skt.BeginAccept(new AsyncCallback(ASyncAccept), new SocketObj() { skt = args.skt, str = "default" });
+            }
         }
-
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 
     static void ASyncDataRcv(IAsyncResult result)
     {
-        if (result.AsyncState is ClientSocketObj args)
+        try
         {
-            // receive data buffer
-            byte[] dataRcv = args.data;
-            int lenRcv = args.skt.EndReceive(result);
-            Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
+            if (result.AsyncState is ClientSocketObj args)
+            {
+                // receive data buffer
+                byte[] dataRcv = args.data;
+                int lenRcv = args.skt.EndReceive(result);
+                if(lenRcv==0){
+                    Console.WriteLine("Client is offline");
+                    args.skt.Shutdown(SocketShutdown.Both);
+                    args.skt.Close();
+                    return;
+                }
+                Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
 
-            string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
-            Console.WriteLine("Rcv Client Msg: " + msgRcv);
-            // send what its receive
-            byte[] rcv = Encoding.UTF8.GetBytes(msgRcv);
-            args.skt.Send(rcv);
+                string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
+                Console.WriteLine("Rcv Client Msg: " + msgRcv);
+                // send what its receive
+                byte[] rcv = Encoding.UTF8.GetBytes(msgRcv);
+                args.skt.Send(rcv);
 
-            args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
+                args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
+            }
         }
-
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
     #endregion
 

@@ -2,63 +2,115 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
-class SendObj{
+class SendObj
+{
     public Socket skt;
     public EndPoint pt;
 }
 
-class ReceiveData{
+class ReceiveData
+{
     public Socket skt;
     public byte[] dataBytes;
 }
 
 class Client
 {
+    static bool isCanceled = false;
     static void Main(String[] args)
     {
-        ASyncSendData();
+        ASyncConnection();
         Console.Read();
     }
 
-#region ASync
-    static void ASyncSendData()
+    #region ASync
+    static void ASyncConnection()
     {
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPAddress ipAddress = new IPAddress(new byte[] { 127, 0, 0, 1 });
-        EndPoint pt = new IPEndPoint(ipAddress, 12700);
+        EndPoint pt = new IPEndPoint(ipAddress, 12701);
         Console.WriteLine("Client Start...");
-        // connection is only once
-        socket.BeginConnect(pt, new AsyncCallback(SendDataHandle), new SendObj(){skt = socket, pt = pt});
+        try
+        {
+            // connection is only once
+            socket.BeginConnect(pt, new AsyncCallback(ConnectionHandle), new SendObj() { skt = socket, pt = pt });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
 
+        // send data
+        while (true)
+        {
+            string msgSend = Console.ReadLine();
+            if (msgSend.Length > 0)
+            {
+                if (msgSend.Equals("quit"))
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Close();
+                    isCanceled = true;
+                    break;
+                }
+                else
+                {
+                    socket.Send(Encoding.UTF8.GetBytes(msgSend));
+                }
+            }
+        }
     }
 
-    static void SendDataHandle(IAsyncResult result)
+    static void ConnectionHandle(IAsyncResult result)
     {
-        if(result.AsyncState is SendObj args)
+        try
         {
-            args.skt.EndConnect(result);
+            if (result.AsyncState is SendObj args)
+            {
+                args.skt.EndConnect(result);
 
-            byte[] dataRcv = new byte[1024];
-            args.skt.BeginReceive(dataRcv,0,1024,SocketFlags.None,new AsyncCallback(ReceiveDataHandle), new ReceiveData(){skt = args.skt,dataBytes = dataRcv});
+                byte[] dataRcv = new byte[1024];
+                args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveDataHandle), new ReceiveData() { skt = args.skt, dataBytes = dataRcv });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
         }
     }
 
-    static void ReceiveDataHandle(IAsyncResult result){
-        if(result.AsyncState is ReceiveData args)
+    static void ReceiveDataHandle(IAsyncResult result)
+    {
+        if(isCanceled) return;
+        try
         {
-            int len = args.skt.EndReceive(result);
+            if (result.AsyncState is ReceiveData args)
+            {
+                int len = args.skt.EndReceive(result);
+                if (len == 0)
+                {
+                    Console.WriteLine("Server is offline");
+                    args.skt.Shutdown(SocketShutdown.Both);
+                    args.skt.Close();
+                    return;
+                }
+                string rcvMsg = Encoding.UTF8.GetString(args.dataBytes, 0, len);
+                Console.WriteLine("Rcv Server Data: " + rcvMsg);
 
-            string rcvMsg = Encoding.UTF8.GetString(args.dataBytes, 0, len);
-            Console.WriteLine("Rcv Server Data: " + rcvMsg);
-
-            args.skt.BeginReceive(args.dataBytes,0,1024,SocketFlags.None,new AsyncCallback(ReceiveDataHandle), new ReceiveData(){skt = args.skt,dataBytes = args.dataBytes});
+                args.skt.BeginReceive(args.dataBytes, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveDataHandle), new ReceiveData() { skt = args.skt, dataBytes = args.dataBytes });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
         }
     }
-#endregion
+    #endregion
 
-#region Sync
+    #region Sync
     static void SyncSendData()
     {
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -95,5 +147,5 @@ class Client
             }
         }
     }
-#endregion
+    #endregion
 }
