@@ -58,9 +58,49 @@ class Client
                 }
                 else
                 {
-                    socket.Send(Encoding.UTF8.GetBytes(msgSend));
+                    //ASync Sending data
+                    //socket.Send(Encoding.UTF8.GetBytes(msgSend));
+                    byte[] data = Encoding.UTF8.GetBytes(msgSend);
+                    NetworkStream ns = null;
+                    try
+                    {
+                        ns = new NetworkStream(socket);
+                        if (ns.CanWrite)
+                        {
+                            ns.BeginWrite(
+                                data,
+                                0,
+                                data.Length,
+                                new AsyncCallback(SendHandle),
+                                ns
+                            );
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+
                 }
             }
+        }
+    }
+
+    static void SendHandle(IAsyncResult result)
+    {
+        try
+        {
+
+            if (result.AsyncState is NetworkStream ns)
+            {
+                ns.EndWrite(result);
+                ns.Flush();
+                ns.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
         }
     }
 
@@ -84,7 +124,7 @@ class Client
 
     static void ReceiveDataHandle(IAsyncResult result)
     {
-        if(isCanceled) return;
+        if (isCanceled) return;
         try
         {
             if (result.AsyncState is ReceiveData args)

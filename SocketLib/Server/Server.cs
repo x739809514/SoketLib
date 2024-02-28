@@ -81,7 +81,8 @@ class Server
                 // receive data buffer
                 byte[] dataRcv = args.data;
                 int lenRcv = args.skt.EndReceive(result);
-                if(lenRcv==0){
+                if (lenRcv == 0)
+                {
                     Console.WriteLine("Client is offline");
                     args.skt.Shutdown(SocketShutdown.Both);
                     args.skt.Close();
@@ -93,9 +94,47 @@ class Server
                 Console.WriteLine("Rcv Client Msg: " + msgRcv);
                 // send what its receive
                 byte[] rcv = Encoding.UTF8.GetBytes(msgRcv);
-                args.skt.Send(rcv);
+                
+                //args.skt.Send(rcv);
+                NetworkStream ns = null;
+                try
+                {
+                    ns = new NetworkStream(args.skt);
+                    if (ns.CanWrite)
+                    {
+                        ns.BeginWrite(
+                            rcv,
+                            0,
+                            rcv.Length,
+                            new AsyncCallback(SendHandle),
+                            ns
+                        );
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
 
                 args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void SendHandle(IAsyncResult result)
+    {
+        try
+        {
+
+            if (result.AsyncState is NetworkStream ns)
+            {
+                ns.EndWrite(result);
+                ns.Flush();
+                ns.Close();
             }
         }
         catch (Exception e)
