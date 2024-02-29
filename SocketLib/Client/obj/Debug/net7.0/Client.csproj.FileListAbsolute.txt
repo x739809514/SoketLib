@@ -26,3 +26,6 @@ D:/A工作区/SocketLib/SocketLib/Client/obj/Debug/net7.0/ref/Client.dll
 /Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/Debug/net7.0/Client.pdb
 /Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/Debug/net7.0/Client.genruntimeconfig.cache
 /Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/Debug/net7.0/ref/Client.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/Client/bin/Debug/net7.0/Newtonsoft.Json.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/Debug/net7.0/Client.csproj.AssemblyReference.cache
+/Users/innovation/CodePlace/SocketLib/SocketLib/Client/obj/Debug/net7.0/Client.csproj.CopyComplete

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "9slqR56xiAv9/xMjOStHEOFWvWXkbMuex99h9e5d9tqTcwhYgzgHAUFQHKwfjzwkIKgQbCJPgpgpe+4KVEolmw==",
+  "dgSpecHash": "QGJOM8VVu5DYmLtBuZn5kL9ma2j6Ef0BEZx5IfmOKf9dQ8MM2RPpKiJ3VPY/RKPShvTdTYnDqPYVL+IULidNJQ==",
   "success": true,
   "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/Server/Server.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

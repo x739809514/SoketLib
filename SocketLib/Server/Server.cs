@@ -4,6 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 class SocketObj
 {
@@ -17,6 +20,14 @@ class ClientSocketObj
     public byte[] data;
 }
 
+[Serializable]
+class LoginMsg
+{
+    public int serverID;
+    public string mail;
+    public string password;
+}
+
 class Server
 {
     static void Main(String[] args)
@@ -25,6 +36,21 @@ class Server
         CreateASyncReceive();
         //CreateBasicServer();
         Console.Read();
+    }
+
+    static LoginMsg DeSerializeData(byte[] dat)
+    {
+        string data = Encoding.UTF8.GetString(dat);
+        LoginMsg msg = JsonConvert.DeserializeObject<LoginMsg>(data);
+        if (msg != null)
+        {
+            return msg;
+        }
+        else
+        {
+            Console.WriteLine("Deserialize failed");
+            return null;
+        }
     }
 
     #region ASynclear
@@ -90,11 +116,17 @@ class Server
                 }
                 Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
 
-                string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
-                Console.WriteLine("Rcv Client Msg: " + msgRcv);
+                //string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
+                //Console.WriteLine("Rcv Client Msg: " + msgRcv);
+                LoginMsg loginMsg = DeSerializeData(dataRcv);
+                Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
+                Console.WriteLine("Server_Mail: " + loginMsg.mail);
+                Console.WriteLine("Server_Password: " + loginMsg.password);
+
+                string sendingdata = JsonConvert.SerializeObject(loginMsg);
                 // send what its receive
-                byte[] rcv = Encoding.UTF8.GetBytes(msgRcv);
-                
+                byte[] rcv = Encoding.UTF8.GetBytes(sendingdata);
+
                 //args.skt.Send(rcv);
                 NetworkStream ns = null;
                 try

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using Newtonsoft.Json;
 
 class SendObj
 {
@@ -17,6 +18,13 @@ class ReceiveData
     public byte[] dataBytes;
 }
 
+[Serializable]
+class LoginMsg{
+    public int serverID;
+    public string mail;
+    public string password;
+}
+
 class Client
 {
     static bool isCanceled = false;
@@ -24,6 +32,18 @@ class Client
     {
         ASyncConnection();
         Console.Read();
+    }
+
+    static byte[] SerializableData(){
+        LoginMsg msg = new LoginMsg(){
+            serverID = 101,
+            mail = "1612650023@qq.com",
+            password = "xxoo"
+        };
+
+        string json = JsonConvert.SerializeObject(msg);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+        return data;
     }
 
     #region ASync
@@ -61,6 +81,7 @@ class Client
                     //ASync Sending data
                     //socket.Send(Encoding.UTF8.GetBytes(msgSend));
                     byte[] data = Encoding.UTF8.GetBytes(msgSend);
+                    data = SerializableData();
                     NetworkStream ns = null;
                     try
                     {
