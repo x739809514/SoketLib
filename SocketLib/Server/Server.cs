@@ -2,10 +2,7 @@
 
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 class SocketObj
@@ -17,7 +14,7 @@ class SocketObj
 class ClientSocketObj
 {
     public Socket skt;
-    public byte[] data;
+    public NetPackage pack;
 }
 
 [Serializable]
@@ -26,6 +23,11 @@ class LoginMsg
     public int serverID;
     public string mail;
     public string password;
+
+    public override string ToString()
+    {
+        return "ServerID is: " + serverID + " mail is: " + mail + " password is:" + password;
+    }
 }
 
 class Server
@@ -64,7 +66,7 @@ class Server
             socket.Bind(pt);
             socket.Listen(100);
             Console.WriteLine("Server Start...");
-            socket.BeginAccept(new AsyncCallback(ASyncConnection), new SocketObj() { skt = socket, str = "default" });
+            socket.BeginAccept(ASyncConnection, new SocketObj() { skt = socket, str = "default" });
         }
         catch (Exception e)
         {
@@ -86,10 +88,11 @@ class Server
                 clientSocket.Send(bytes);
 
                 byte[] dataRcv = new byte[4];
-                clientSocket.BeginReceive(dataRcv, 0, dataRcv.Length, SocketFlags.None, new AsyncCallback(ASyncHeadRcv), new ClientSocketObj() { skt = clientSocket, data = dataRcv });
+                NetPackage pkg = new NetPackage();
+                clientSocket.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = clientSocket, pack = pkg });
 
                 // since a child thread is closed, so we need to start a new one
-                args.skt.BeginAccept(new AsyncCallback(ASyncConnection), new SocketObj() { skt = args.skt, str = "default" });
+                args.skt.BeginAccept(ASyncConnection, new SocketObj() { skt = args.skt, str = "default" });
             }
         }
         catch (Exception e)
@@ -105,7 +108,7 @@ class Server
             if (result.AsyncState is ClientSocketObj args)
             {
                 // receive data buffer
-                byte[] dataRcv = args.data;
+                byte[] dataRcv = args.pack.headBuff;
                 int lenRcv = args.skt.EndReceive(result);
                 if (lenRcv == 0)
                 {
@@ -122,17 +125,14 @@ class Server
                     }
                     else
                     {
-                        // here server receives the head of msg, then parse the head msg
-                        // in this 4 byte msg, there is the length of the body message
-                        int bodyLen = BitConverter.ToInt32(args.data, 0);
-                        args.data = new byte[bodyLen];
+                        args.pack.InitBodyBuff();
                         // recevive data
                         args.skt.BeginReceive(
-                            args.data,
+                            args.pack.bodyBuff,
                             0,
-                            bodyLen,
+                            args.pack.bodyLen,
                             SocketFlags.None,
-                            new AsyncCallback(ASyncBodyRcv),
+                            ASyncBodyRcv,
                             args
                         );
                     }
@@ -152,19 +152,20 @@ class Server
             if (result.AsyncState is ClientSocketObj args)
             {
                 int lenRcv = args.skt.EndReceive(result);
-                if (lenRcv < args.data.Length)
+                if (lenRcv < args.pack.bodyLen)
                 {
                     // Todo: continue to receive
                 }
                 else
                 {
-                    LoginMsg loginMsg = DeSerializeData(args.data);
-                    Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
-                    Console.WriteLine("Server_Mail: " + loginMsg.mail);
-                    Console.WriteLine("Server_Password: " + loginMsg.password);
+                    LoginMsg loginMsg = DeSerializeData(args.pack.bodyBuff);
+                    Console.WriteLine(loginMsg.ToString());
+                    // Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
+                    // Console.WriteLine("Server_Mail: " + loginMsg.mail);
+                    // Console.WriteLine("Server_Password: " + loginMsg.password);
                 }
 
-                args.skt.BeginReceive(args.data, 0, 4, SocketFlags.None, new AsyncCallback(ASyncHeadRcv), new ClientSocketObj() { skt = args.skt, data = new byte[4]});
+                args.skt.BeginReceive(args.pack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = args.skt, pack = args.pack});
             }
         }
         catch (Exception e)
@@ -173,64 +174,64 @@ class Server
         }
     }
 
-    static void ASyncDataRcv(IAsyncResult result)
-    {
-        try
-        {
-            if (result.AsyncState is ClientSocketObj args)
-            {
-                // receive data buffer
-                byte[] dataRcv = args.data;
-                int lenRcv = args.skt.EndReceive(result);
-                if (lenRcv == 0)
-                {
-                    Console.WriteLine("Client is offline");
-                    args.skt.Shutdown(SocketShutdown.Both);
-                    args.skt.Close();
-                    return;
-                }
-                Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
+    // static void ASyncDataRcv(IAsyncResult result)
+    // {
+    //     try
+    //     {
+    //         if (result.AsyncState is ClientSocketObj args)
+    //         {
+    //             // receive data buffer
+    //             byte[] dataRcv = args.data;
+    //             int lenRcv = args.skt.EndReceive(result);
+    //             if (lenRcv == 0)
+    //             {
+    //                 Console.WriteLine("Client is offline");
+    //                 args.skt.Shutdown(SocketShutdown.Both);
+    //                 args.skt.Close();
+    //                 return;
+    //             }
+    //             Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
 
-                //string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
-                //Console.WriteLine("Rcv Client Msg: " + msgRcv);
-                LoginMsg loginMsg = DeSerializeData(dataRcv);
-                Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
-                Console.WriteLine("Server_Mail: " + loginMsg.mail);
-                Console.WriteLine("Server_Password: " + loginMsg.password);
+    //             //string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
+    //             //Console.WriteLine("Rcv Client Msg: " + msgRcv);
+    //             LoginMsg loginMsg = DeSerializeData(dataRcv);
+    //             Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
+    //             Console.WriteLine("Server_Mail: " + loginMsg.mail);
+    //             Console.WriteLine("Server_Password: " + loginMsg.password);
 
-                string sendingdata = JsonConvert.SerializeObject(loginMsg);
-                // send what its receive
-                byte[] rcv = Encoding.UTF8.GetBytes(sendingdata);
+    //             string sendingdata = JsonConvert.SerializeObject(loginMsg);
+    //             // send what its receive
+    //             byte[] rcv = Encoding.UTF8.GetBytes(sendingdata);
 
-                //args.skt.Send(rcv);
-                NetworkStream ns = null;
-                try
-                {
-                    ns = new NetworkStream(args.skt);
-                    if (ns.CanWrite)
-                    {
-                        ns.BeginWrite(
-                            rcv,
-                            0,
-                            rcv.Length,
-                            new AsyncCallback(SendHandle),
-                            ns
-                        );
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
+    //             //args.skt.Send(rcv);
+    //             NetworkStream ns = null;
+    //             try
+    //             {
+    //                 ns = new NetworkStream(args.skt);
+    //                 if (ns.CanWrite)
+    //                 {
+    //                     ns.BeginWrite(
+    //                         rcv,
+    //                         0,
+    //                         rcv.Length,
+    //                         new AsyncCallback(SendHandle),
+    //                         ns
+    //                     );
+    //                 }
+    //             }
+    //             catch (Exception e)
+    //             {
+    //                 Console.WriteLine(e.ToString());
+    //             }
 
-                args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-    }
+    //             args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
+    //         }
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine(e.ToString());
+    //     }
+    // }
 
     static void SendHandle(IAsyncResult result)
     {
