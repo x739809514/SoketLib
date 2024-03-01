@@ -181,7 +181,7 @@ class Server
     //         if (result.AsyncState is ClientSocketObj args)
     //         {
     //             // receive data buffer
-    //             byte[] dataRcv = args.data;
+    //             byte[] dataRcv = args.pack.bodyBuff;
     //             int lenRcv = args.skt.EndReceive(result);
     //             if (lenRcv == 0)
     //             {
