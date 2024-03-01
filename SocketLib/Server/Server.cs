@@ -30,6 +30,17 @@ class LoginMsg
     }
 }
 
+[Serializable]
+class SendMsg
+{
+    public string info;
+
+    public override string ToString()
+    {
+        return "info: " + info;
+    }
+}
+
 class Server
 {
     static void Main(String[] args)
@@ -101,6 +112,22 @@ class Server
         }
     }
 
+    // Send Info Message to Client
+    static byte[] SendInfoMsg(Socket socket, SendMsg msg)
+    {
+        #pragma warning restore format
+        string json = JsonConvert.SerializeObject(msg);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+
+        int len = data.Length;
+        byte[] pkg = new byte[len + 4];
+        byte[] head = BitConverter.GetBytes(len);
+        head.CopyTo(pkg, 0);
+        data.CopyTo(pkg, 4);
+
+        return data;
+    }
+
     static void ASyncHeadRcv(IAsyncResult result)
     {
         try
@@ -122,7 +149,7 @@ class Server
                     args.pack.headIndex += lenRcv;
                     if (args.pack.headIndex < 4)
                     {
-                        Console.WriteLine(lenRcv +"_head need to continue receive");
+                        Console.WriteLine(lenRcv + "_head need to continue receive");
                         args.skt.BeginReceive(
                             args.pack.headBuff,
                             args.pack.headIndex,
@@ -208,6 +235,11 @@ class Server
         {
             Console.WriteLine(e.ToString());
         }
+    }
+
+    static void HandleInfoMsg(SendMsg msg)
+    {
+        Console.WriteLine("Client Rcv Data: " + msg.ToString());
     }
     #endregion
 

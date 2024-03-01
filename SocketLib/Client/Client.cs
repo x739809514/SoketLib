@@ -26,6 +26,16 @@ class LoginMsg
     public string password;
 }
 
+[Serializable]
+class SendMsg{
+    public string info;
+
+    public override string ToString()
+    {
+        return "info: " + info;
+    }
+}
+
 class Client
 {
     static bool isCanceled = false;
