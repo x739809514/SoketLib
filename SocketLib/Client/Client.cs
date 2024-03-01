@@ -43,7 +43,13 @@ class Client
 
         string json = JsonConvert.SerializeObject(msg);
         byte[] data = Encoding.UTF8.GetBytes(json);
-        return data;
+        
+        int len = data.Length;
+        byte[] pkg = new byte[len+4];
+        byte[] head = BitConverter.GetBytes(len);
+        head.CopyTo(pkg,0);
+        data.CopyTo(pkg,4);
+        return pkg;
     }
 
     #region ASync
@@ -101,7 +107,6 @@ class Client
                     {
                         Console.WriteLine(e.ToString());
                     }
-
                 }
             }
         }
@@ -111,7 +116,6 @@ class Client
     {
         try
         {
-
             if (result.AsyncState is NetworkStream ns)
             {
                 ns.EndWrite(result);

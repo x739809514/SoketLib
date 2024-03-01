@@ -33,7 +33,7 @@ class Server
     static void Main(String[] args)
     {
         Console.WriteLine("The main thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
-        CreateASyncReceive();
+        CreateASyncConnection();
         //CreateBasicServer();
         Console.Read();
     }
@@ -54,7 +54,7 @@ class Server
     }
 
     #region ASynclear
-    static void CreateASyncReceive()
+    static void CreateASyncConnection()
     {
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPAddress ipAddress = new IPAddress(new byte[] { 127, 0, 0, 1 });
@@ -64,7 +64,7 @@ class Server
             socket.Bind(pt);
             socket.Listen(100);
             Console.WriteLine("Server Start...");
-            socket.BeginAccept(new AsyncCallback(ASyncAccept), new SocketObj() { skt = socket, str = "default" });
+            socket.BeginAccept(new AsyncCallback(ASyncConnection), new SocketObj() { skt = socket, str = "default" });
         }
         catch (Exception e)
         {
@@ -72,7 +72,7 @@ class Server
         }
     }
 
-    static void ASyncAccept(IAsyncResult result)
+    static void ASyncConnection(IAsyncResult result)
     {
         try
         {
@@ -85,11 +85,86 @@ class Server
                 byte[] bytes = Encoding.UTF8.GetBytes(msg);
                 clientSocket.Send(bytes);
 
-                byte[] dataRcv = new byte[1024];
-                clientSocket.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = clientSocket, data = dataRcv });
+                byte[] dataRcv = new byte[4];
+                clientSocket.BeginReceive(dataRcv, 0, dataRcv.Length, SocketFlags.None, new AsyncCallback(ASyncHeadRcv), new ClientSocketObj() { skt = clientSocket, data = dataRcv });
 
                 // since a child thread is closed, so we need to start a new one
-                args.skt.BeginAccept(new AsyncCallback(ASyncAccept), new SocketObj() { skt = args.skt, str = "default" });
+                args.skt.BeginAccept(new AsyncCallback(ASyncConnection), new SocketObj() { skt = args.skt, str = "default" });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void ASyncHeadRcv(IAsyncResult result)
+    {
+        try
+        {
+            if (result.AsyncState is ClientSocketObj args)
+            {
+                // receive data buffer
+                byte[] dataRcv = args.data;
+                int lenRcv = args.skt.EndReceive(result);
+                if (lenRcv == 0)
+                {
+                    Console.WriteLine("Client is offline");
+                    args.skt.Shutdown(SocketShutdown.Both);
+                    args.skt.Close();
+                    return;
+                }
+                else
+                {
+                    if (lenRcv < 4)
+                    {
+                        // Todo: Continue to study
+                    }
+                    else
+                    {
+                        // here server receives the head of msg, then parse the head msg
+                        // in this 4 byte msg, there is the length of the body message
+                        int bodyLen = BitConverter.ToInt32(args.data, 0);
+                        args.data = new byte[bodyLen];
+                        // recevive data
+                        args.skt.BeginReceive(
+                            args.data,
+                            0,
+                            bodyLen,
+                            SocketFlags.None,
+                            new AsyncCallback(ASyncBodyRcv),
+                            args
+                        );
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void ASyncBodyRcv(IAsyncResult result)
+    {
+        try
+        {
+            if (result.AsyncState is ClientSocketObj args)
+            {
+                int lenRcv = args.skt.EndReceive(result);
+                if (lenRcv < args.data.Length)
+                {
+                    // Todo: continue to receive
+                }
+                else
+                {
+                    LoginMsg loginMsg = DeSerializeData(args.data);
+                    Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
+                    Console.WriteLine("Server_Mail: " + loginMsg.mail);
+                    Console.WriteLine("Server_Password: " + loginMsg.password);
+                }
+
+                args.skt.BeginReceive(args.data, 0, 4, SocketFlags.None, new AsyncCallback(ASyncHeadRcv), new ClientSocketObj() { skt = args.skt, data = new byte[4]});
             }
         }
         catch (Exception e)
