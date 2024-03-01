@@ -119,9 +119,18 @@ class Server
                 }
                 else
                 {
-                    if (lenRcv < 4)
+                    args.pack.headIndex += lenRcv;
+                    if (args.pack.headIndex < 4)
                     {
-                        // Todo: Continue to study
+                        Console.WriteLine(lenRcv +"_head need to continue receive");
+                        args.skt.BeginReceive(
+                            args.pack.headBuff,
+                            args.pack.headIndex,
+                            args.pack.headLen - args.pack.headIndex,
+                            SocketFlags.None,
+                            ASyncHeadRcv,
+                            args
+                        );
                     }
                     else
                     {
@@ -152,9 +161,18 @@ class Server
             if (result.AsyncState is ClientSocketObj args)
             {
                 int lenRcv = args.skt.EndReceive(result);
-                if (lenRcv < args.pack.bodyLen)
+                args.pack.bodyIndex += lenRcv;
+                if (args.pack.bodyIndex < args.pack.bodyLen)
                 {
-                    // Todo: continue to receive
+                    Console.WriteLine("body need to continue receive");
+                    args.skt.BeginReceive(
+                        args.pack.bodyBuff,
+                        args.pack.bodyIndex,
+                        args.pack.bodyLen - args.pack.bodyIndex,
+                        SocketFlags.None,
+                        ASyncBodyRcv,
+                        args
+                    );
                 }
                 else
                 {
@@ -165,7 +183,7 @@ class Server
                     // Console.WriteLine("Server_Password: " + loginMsg.password);
                 }
 
-                args.skt.BeginReceive(args.pack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = args.skt, pack = args.pack});
+                args.skt.BeginReceive(args.pack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = args.skt, pack = args.pack });
             }
         }
         catch (Exception e)
@@ -173,65 +191,6 @@ class Server
             Console.WriteLine(e.ToString());
         }
     }
-
-    // static void ASyncDataRcv(IAsyncResult result)
-    // {
-    //     try
-    //     {
-    //         if (result.AsyncState is ClientSocketObj args)
-    //         {
-    //             // receive data buffer
-    //             byte[] dataRcv = args.pack.bodyBuff;
-    //             int lenRcv = args.skt.EndReceive(result);
-    //             if (lenRcv == 0)
-    //             {
-    //                 Console.WriteLine("Client is offline");
-    //                 args.skt.Shutdown(SocketShutdown.Both);
-    //                 args.skt.Close();
-    //                 return;
-    //             }
-    //             Console.WriteLine("The Child thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
-
-    //             //string msgRcv = Encoding.UTF8.GetString(dataRcv, 0, lenRcv);
-    //             //Console.WriteLine("Rcv Client Msg: " + msgRcv);
-    //             LoginMsg loginMsg = DeSerializeData(dataRcv);
-    //             Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
-    //             Console.WriteLine("Server_Mail: " + loginMsg.mail);
-    //             Console.WriteLine("Server_Password: " + loginMsg.password);
-
-    //             string sendingdata = JsonConvert.SerializeObject(loginMsg);
-    //             // send what its receive
-    //             byte[] rcv = Encoding.UTF8.GetBytes(sendingdata);
-
-    //             //args.skt.Send(rcv);
-    //             NetworkStream ns = null;
-    //             try
-    //             {
-    //                 ns = new NetworkStream(args.skt);
-    //                 if (ns.CanWrite)
-    //                 {
-    //                     ns.BeginWrite(
-    //                         rcv,
-    //                         0,
-    //                         rcv.Length,
-    //                         new AsyncCallback(SendHandle),
-    //                         ns
-    //                     );
-    //                 }
-    //             }
-    //             catch (Exception e)
-    //             {
-    //                 Console.WriteLine(e.ToString());
-    //             }
-
-    //             args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ASyncDataRcv), new ClientSocketObj() { skt = args.skt, data = dataRcv });
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e.ToString());
-    //     }
-    // }
 
     static void SendHandle(IAsyncResult result)
     {

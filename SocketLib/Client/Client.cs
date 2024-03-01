@@ -19,7 +19,8 @@ class ReceiveData
 }
 
 [Serializable]
-class LoginMsg{
+class LoginMsg
+{
     public int serverID;
     public string mail;
     public string password;
@@ -28,14 +29,19 @@ class LoginMsg{
 class Client
 {
     static bool isCanceled = false;
+    static int[] segLenArr = new int[] { 2, 1, 3, 1000 };
+    static int sendIndex = -1;
+
     static void Main(String[] args)
     {
         ASyncConnection();
         Console.Read();
     }
 
-    static byte[] SerializableData(){
-        LoginMsg msg = new LoginMsg(){
+    static byte[] SerializableData()
+    {
+        LoginMsg msg = new LoginMsg()
+        {
             serverID = 101,
             mail = "1612650023@qq.com",
             password = "xxoo"
@@ -43,13 +49,25 @@ class Client
 
         string json = JsonConvert.SerializeObject(msg);
         byte[] data = Encoding.UTF8.GetBytes(json);
-        
+
         int len = data.Length;
-        byte[] pkg = new byte[len+4];
+        byte[] pkg = new byte[len + 4];
         byte[] head = BitConverter.GetBytes(len);
-        head.CopyTo(pkg,0);
-        data.CopyTo(pkg,4);
-        return pkg;
+        head.CopyTo(pkg, 0);
+        data.CopyTo(pkg, 4);
+
+        // send by segment
+        List<byte[]> dataList = new List<byte[]>();
+        int takeCount = 0;
+        for (int i = 0; i < segLenArr.Length; i++)
+        {
+            byte[] segBytes = pkg.Skip(takeCount).Take(segLenArr[i]).ToArray();
+            takeCount += segLenArr[i];
+            dataList.Add(segBytes);
+        }
+        sendIndex++;
+
+        return dataList[sendIndex];
     }
 
     #region ASync
