@@ -10,7 +10,7 @@ public class RXPkg
     public byte[] bodyBuff;
     public int bodyIndex = 0;
 
-    public NetPackage()
+    public RXPkg()
     {
         headBuff = new byte[4];
     }

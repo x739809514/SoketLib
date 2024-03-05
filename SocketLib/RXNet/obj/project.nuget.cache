@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "M3nhfUcy2eaRWftCE70TqQeBVDqRNqSfwnZ7qjNliDMwuKE7Jv0XVjdLLHAFTF7AbD4BBp32dlNg0XHBMM02mw==",
+  "success": true,
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj",
+  "expectedPackageFiles": [
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

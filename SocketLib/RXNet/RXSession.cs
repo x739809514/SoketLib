@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Sockets;
-namespace RXNet;
 
 namespace RXNet
 {
@@ -44,7 +43,7 @@ namespace RXNet
                             pkg.headLen - pkg.headIndex,
                             SocketFlags.None,
                             ASyncHeadRcv,
-                            args
+                            result
                         );
                     }
                     else
@@ -57,7 +56,7 @@ namespace RXNet
                             pkg.bodyLen,
                             SocketFlags.None,
                             ASyncBodyRcv,
-                            args
+                            pkg
                         );
                     }
                 }
@@ -93,12 +92,12 @@ namespace RXNet
                         pkg.bodyLen - pkg.bodyIndex,
                         SocketFlags.None,
                         ASyncBodyRcv,
-                        args
+                        pkg
                     );
                 }
                 else
                 {
-                    SendMsg sendMsg = DeSerializeData(pkg.bodyBuff);
+                    RXMsg sendMsg = RXTool.DeSerializeData(pkg.bodyBuff);
                     Console.WriteLine(sendMsg.ToString());
                 }
 
