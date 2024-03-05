@@ -6,35 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Newtonsoft.Json;
 
-class SendObj
-{
-    public Socket skt;
-    public EndPoint pt;
-}
 
-class ReceiveData
-{
-    public Socket skt;
-    public byte[] dataBytes;
-}
-
-[Serializable]
-class LoginMsg
-{
-    public int serverID;
-    public string mail;
-    public string password;
-}
-
-[Serializable]
-class SendMsg{
-    public string info;
-
-    public override string ToString()
-    {
-        return "info: " + info;
-    }
-}
 
 class Client
 {
@@ -78,6 +50,21 @@ class Client
         sendIndex++;
 
         return dataList[sendIndex];
+    }
+
+    static SendMsg DeSerializeData(byte[] dat)
+    {
+        string data = Encoding.UTF8.GetString(dat);
+        SendMsg msg = JsonConvert.DeserializeObject<SendMsg>(data);
+        if (msg != null)
+        {
+            return msg;
+        }
+        else
+        {
+            Console.WriteLine("Deserialize failed");
+            return null;
+        }
     }
 
     #region ASync
@@ -165,8 +152,10 @@ class Client
             {
                 args.skt.EndConnect(result);
 
-                byte[] dataRcv = new byte[1024];
-                args.skt.BeginReceive(dataRcv, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveDataHandle), new ReceiveData() { skt = args.skt, dataBytes = dataRcv });
+                byte[] dataRcv = new byte[4];
+                NetPackage pkg = new NetPackage();
+                args.skt.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, new ReceiveData() { skt = args.skt, netPack = pkg });
+
             }
         }
         catch (Exception e)
@@ -175,25 +164,84 @@ class Client
         }
     }
 
-    static void ReceiveDataHandle(IAsyncResult result)
+    static void ASyncHeadRcv(IAsyncResult result)
     {
-        if (isCanceled) return;
         try
         {
             if (result.AsyncState is ReceiveData args)
             {
-                int len = args.skt.EndReceive(result);
-                if (len == 0)
+                // receive data buffer
+                byte[] dataRcv = args.netPack.headBuff;
+                int lenRcv = args.skt.EndReceive(result);
+                if (lenRcv == 0)
                 {
                     Console.WriteLine("Server is offline");
                     args.skt.Shutdown(SocketShutdown.Both);
                     args.skt.Close();
                     return;
                 }
-                string rcvMsg = Encoding.UTF8.GetString(args.dataBytes, 0, len);
-                Console.WriteLine("Rcv Server Data: " + rcvMsg);
+                else
+                {
+                    args.netPack.headIndex += lenRcv;
+                    if (args.netPack.headIndex < 4)
+                    {
+                        args.skt.BeginReceive(
+                            args.netPack.headBuff,
+                            args.netPack.headIndex,
+                            args.netPack.headLen - args.netPack.headIndex,
+                            SocketFlags.None,
+                            ASyncHeadRcv,
+                            args
+                        );
+                    }
+                    else
+                    {
+                        args.netPack.InitBodyBuff();
+                        // recevive data
+                        args.skt.BeginReceive(
+                            args.netPack.bodyBuff,
+                            0,
+                            args.netPack.bodyLen,
+                            SocketFlags.None,
+                            ASyncBodyRcv,
+                            args
+                        );
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
 
-                args.skt.BeginReceive(args.dataBytes, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveDataHandle), new ReceiveData() { skt = args.skt, dataBytes = args.dataBytes });
+    static void ASyncBodyRcv(IAsyncResult result)
+    {
+        try
+        {
+            if (result.AsyncState is ReceiveData args)
+            {
+                int lenRcv = args.skt.EndReceive(result);
+                args.netPack.bodyIndex += lenRcv;
+                if (args.netPack.bodyIndex < args.netPack.bodyLen)
+                {
+                    args.skt.BeginReceive(
+                        args.netPack.bodyBuff,
+                        args.netPack.bodyIndex,
+                        args.netPack.bodyLen - args.netPack.bodyIndex,
+                        SocketFlags.None,
+                        ASyncBodyRcv,
+                        args
+                    );
+                }
+                else
+                {
+                    SendMsg sendMsg = DeSerializeData(args.netPack.bodyBuff);
+                    Console.WriteLine(sendMsg.ToString());
+                }
+
+                args.skt.BeginReceive(args.netPack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ReceiveData() { skt = args.skt, netPack = args.netPack });
             }
         }
         catch (Exception e)

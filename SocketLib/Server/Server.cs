@@ -95,9 +95,9 @@ class Server
             if (ns.CanWrite)
             {
                 ns.BeginWrite(
-                    data,
+                    pkg,
                     0,
-                    data.Length,
+                    pkg.Length,
                     SendHandle,
                     ns
                 );
@@ -216,7 +216,7 @@ class Server
         {
             Console.WriteLine(e.ToString());
         }
-    }
+    } 
 
     static void HandleInfoMsg(SendMsg msg)
     {
