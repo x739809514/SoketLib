@@ -68,7 +68,7 @@ namespace RXNet
             }
         }
 
-        public void ASyncBodyRcv(IAsyncResult result)
+        private void ASyncBodyRcv(IAsyncResult result)
         {
             try
             {
@@ -113,6 +113,51 @@ namespace RXNet
         {
             Console.WriteLine(msg.ToString());
         }
+
+        public void SendMsg(RXMsg msg)
+        {
+            byte[] data = RXTool.SerializeData(msg);
+            byte[] pkg = RXTool.PackLenInfo(data);
+
+            NetworkStream ns = null;
+            try
+            {
+                ns = new NetworkStream(skt);
+                if (ns.CanWrite)
+                {
+                    ns.BeginWrite(
+                        pkg,
+                        0,
+                        pkg.Length,
+                        SendCB,
+                        ns
+                    );
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+        }
+
+        private void SendCB(IAsyncResult result)
+        {
+            try
+            {
+                if (result.AsyncState is NetworkStream ns)
+                {
+                    ns.EndWrite(result);
+                    ns.Flush();
+                    ns.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
     }
 }
 
