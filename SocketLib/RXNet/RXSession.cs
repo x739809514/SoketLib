@@ -98,11 +98,10 @@ namespace RXNet
                 else
                 {
                     RXMsg sendMsg = RXTool.DeSerializeData(pkg.bodyBuff);
-                    Console.WriteLine(sendMsg.ToString());
+                    HandleMessage(sendMsg);
+                    pkg.ResetData();
+                    skt.BeginReceive(pkg.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, pkg);
                 }
-
-                skt.BeginReceive(pkg.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, pkg);
-
             }
             catch (Exception e)
             {
@@ -110,7 +109,10 @@ namespace RXNet
             }
         }
 
-
+        private void HandleMessage(RXMsg msg)
+        {
+            Console.WriteLine(msg.ToString());
+        }
     }
 }
 

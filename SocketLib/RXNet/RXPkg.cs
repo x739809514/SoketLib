@@ -22,4 +22,12 @@ public class RXPkg
         bodyLen = BitConverter.ToInt32(headBuff, 0);
         bodyBuff = new byte[bodyLen];
     }
+
+    public void ResetData()
+    {
+        headIndex = 0;
+        bodyIndex = 0;
+        bodyLen = 0;
+        bodyBuff = null;
+    }
 }

@@ -22,9 +22,10 @@ class RXTool
         }
     }
 
-    public static string SerializeData(RXMsg msg)
+    public static byte[] SerializeData(RXMsg msg)
     {
-        return JsonConvert.SerializeObject(msg);
+        string json = JsonConvert.SerializeObject(msg);
+        return Encoding.UTF8.GetBytes(json);
     }
 
 }
