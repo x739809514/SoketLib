@@ -5,41 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
 
-class SocketObj
-{
-    public Socket skt;
-    public string str;
-}
-
-class ClientSocketObj
-{
-    public Socket skt;
-    public NetPackage pack;
-}
-
-[Serializable]
-class LoginMsg
-{
-    public int serverID;
-    public string mail;
-    public string password;
-
-    public override string ToString()
-    {
-        return "ServerID is: " + serverID + " mail is: " + mail + " password is:" + password;
-    }
-}
-
-[Serializable]
-class SendMsg
-{
-    public string info;
-
-    public override string ToString()
-    {
-        return "info: " + info;
-    }
-}
 
 class Server
 {
@@ -94,13 +59,12 @@ class Server
                 Socket clientSocket = args.skt.EndAccept(result);
                 Console.WriteLine("The Receive thread ID: " + Thread.CurrentThread.ManagedThreadId.ToString());
 
-                string msg = "Connect Successful";
-                byte[] bytes = Encoding.UTF8.GetBytes(msg);
-                clientSocket.Send(bytes);
+                // send info message to client
+                SendInfoMsg(clientSocket, new SendMsg() { info = "Connect Successful" });
 
                 byte[] dataRcv = new byte[4];
                 NetPackage pkg = new NetPackage();
-                clientSocket.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = clientSocket, pack = pkg });
+                clientSocket.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = clientSocket, netPack = pkg });
 
                 // since a child thread is closed, so we need to start a new one
                 args.skt.BeginAccept(ASyncConnection, new SocketObj() { skt = args.skt, str = "default" });
@@ -113,9 +77,8 @@ class Server
     }
 
     // Send Info Message to Client
-    static byte[] SendInfoMsg(Socket socket, SendMsg msg)
+    static void SendInfoMsg(Socket socket, SendMsg msg)
     {
-        #pragma warning restore format
         string json = JsonConvert.SerializeObject(msg);
         byte[] data = Encoding.UTF8.GetBytes(json);
 
@@ -125,7 +88,43 @@ class Server
         head.CopyTo(pkg, 0);
         data.CopyTo(pkg, 4);
 
-        return data;
+        NetworkStream ns = null;
+        try
+        {
+            ns = new NetworkStream(socket);
+            if (ns.CanWrite)
+            {
+                ns.BeginWrite(
+                    data,
+                    0,
+                    data.Length,
+                    SendHandle,
+                    ns
+                );
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void SendHandle(IAsyncResult result)
+    {
+        try
+        {
+
+            if (result.AsyncState is NetworkStream ns)
+            {
+                ns.EndWrite(result);
+                ns.Flush();
+                ns.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 
     static void ASyncHeadRcv(IAsyncResult result)
@@ -135,7 +134,7 @@ class Server
             if (result.AsyncState is ClientSocketObj args)
             {
                 // receive data buffer
-                byte[] dataRcv = args.pack.headBuff;
+                byte[] dataRcv = args.netPack.headBuff;
                 int lenRcv = args.skt.EndReceive(result);
                 if (lenRcv == 0)
                 {
@@ -146,14 +145,14 @@ class Server
                 }
                 else
                 {
-                    args.pack.headIndex += lenRcv;
-                    if (args.pack.headIndex < 4)
+                    args.netPack.headIndex += lenRcv;
+                    if (args.netPack.headIndex < 4)
                     {
                         Console.WriteLine(lenRcv + "_head need to continue receive");
                         args.skt.BeginReceive(
-                            args.pack.headBuff,
-                            args.pack.headIndex,
-                            args.pack.headLen - args.pack.headIndex,
+                            args.netPack.headBuff,
+                            args.netPack.headIndex,
+                            args.netPack.headLen - args.netPack.headIndex,
                             SocketFlags.None,
                             ASyncHeadRcv,
                             args
@@ -161,12 +160,12 @@ class Server
                     }
                     else
                     {
-                        args.pack.InitBodyBuff();
+                        args.netPack.InitBodyBuff();
                         // recevive data
                         args.skt.BeginReceive(
-                            args.pack.bodyBuff,
+                            args.netPack.bodyBuff,
                             0,
-                            args.pack.bodyLen,
+                            args.netPack.bodyLen,
                             SocketFlags.None,
                             ASyncBodyRcv,
                             args
@@ -188,14 +187,14 @@ class Server
             if (result.AsyncState is ClientSocketObj args)
             {
                 int lenRcv = args.skt.EndReceive(result);
-                args.pack.bodyIndex += lenRcv;
-                if (args.pack.bodyIndex < args.pack.bodyLen)
+                args.netPack.bodyIndex += lenRcv;
+                if (args.netPack.bodyIndex < args.netPack.bodyLen)
                 {
                     Console.WriteLine("body need to continue receive");
                     args.skt.BeginReceive(
-                        args.pack.bodyBuff,
-                        args.pack.bodyIndex,
-                        args.pack.bodyLen - args.pack.bodyIndex,
+                        args.netPack.bodyBuff,
+                        args.netPack.bodyIndex,
+                        args.netPack.bodyLen - args.netPack.bodyIndex,
                         SocketFlags.None,
                         ASyncBodyRcv,
                         args
@@ -203,32 +202,14 @@ class Server
                 }
                 else
                 {
-                    LoginMsg loginMsg = DeSerializeData(args.pack.bodyBuff);
+                    LoginMsg loginMsg = DeSerializeData(args.netPack.bodyBuff);
                     Console.WriteLine(loginMsg.ToString());
                     // Console.WriteLine("Server_SeverID: " + loginMsg.serverID);
                     // Console.WriteLine("Server_Mail: " + loginMsg.mail);
                     // Console.WriteLine("Server_Password: " + loginMsg.password);
                 }
 
-                args.skt.BeginReceive(args.pack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = args.skt, pack = args.pack });
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-    }
-
-    static void SendHandle(IAsyncResult result)
-    {
-        try
-        {
-
-            if (result.AsyncState is NetworkStream ns)
-            {
-                ns.EndWrite(result);
-                ns.Flush();
-                ns.Close();
+                args.skt.BeginReceive(args.netPack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ClientSocketObj() { skt = args.skt, netPack = args.netPack });
             }
         }
         catch (Exception e)

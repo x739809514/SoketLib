@@ -1,4 +1,4 @@
-class NetPackage
+public class NetPackage
 {
     public int headLen = 4;
     public byte[] headBuff;
