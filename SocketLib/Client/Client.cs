@@ -20,38 +20,6 @@ class Client
         Console.Read();
     }
 
-    static byte[] SerializableData()
-    {
-        LoginMsg msg = new LoginMsg()
-        {
-            serverID = 101,
-            mail = "1612650023@qq.com",
-            password = "xxoo"
-        };
-
-        string json = JsonConvert.SerializeObject(msg);
-        byte[] data = Encoding.UTF8.GetBytes(json);
-
-        int len = data.Length;
-        byte[] pkg = new byte[len + 4];
-        byte[] head = BitConverter.GetBytes(len);
-        head.CopyTo(pkg, 0);
-        data.CopyTo(pkg, 4);
-
-        // send by segment
-        List<byte[]> dataList = new List<byte[]>();
-        int takeCount = 0;
-        for (int i = 0; i < segLenArr.Length; i++)
-        {
-            byte[] segBytes = pkg.Skip(takeCount).Take(segLenArr[i]).ToArray();
-            takeCount += segLenArr[i];
-            dataList.Add(segBytes);
-        }
-        sendIndex++;
-
-        return dataList[sendIndex];
-    }
-
     static SendMsg DeSerializeData(byte[] dat)
     {
         string data = Encoding.UTF8.GetString(dat);
@@ -102,45 +70,14 @@ class Client
                     //ASync Sending data
                     //socket.Send(Encoding.UTF8.GetBytes(msgSend));
                     byte[] data = Encoding.UTF8.GetBytes(msgSend);
-                    data = SerializableData();
-                    NetworkStream ns = null;
-                    try
+                    SendInfoMsg(socket, new LoginMsg()
                     {
-                        ns = new NetworkStream(socket);
-                        if (ns.CanWrite)
-                        {
-                            ns.BeginWrite(
-                                data,
-                                0,
-                                data.Length,
-                                new AsyncCallback(SendHandle),
-                                ns
-                            );
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                    }
+                        serverID = 101,
+                        mail = "1612650023@qq.com",
+                        password = "xxoo",
+                    });
                 }
             }
-        }
-    }
-
-    static void SendHandle(IAsyncResult result)
-    {
-        try
-        {
-            if (result.AsyncState is NetworkStream ns)
-            {
-                ns.EndWrite(result);
-                ns.Flush();
-                ns.Close();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
         }
     }
 
@@ -152,7 +89,6 @@ class Client
             {
                 args.skt.EndConnect(result);
 
-                byte[] dataRcv = new byte[4];
                 NetPackage pkg = new NetPackage();
                 args.skt.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, new ReceiveData() { skt = args.skt, netPack = pkg });
 
@@ -176,8 +112,11 @@ class Client
                 if (lenRcv == 0)
                 {
                     Console.WriteLine("Server is offline");
-                    args.skt.Shutdown(SocketShutdown.Both);
-                    args.skt.Close();
+                    if (args.skt != null)
+                    {
+                        args.skt.Shutdown(SocketShutdown.Both);
+                        args.skt.Close();
+                    }
                     return;
                 }
                 else
@@ -223,6 +162,15 @@ class Client
             if (result.AsyncState is ReceiveData args)
             {
                 int lenRcv = args.skt.EndReceive(result);
+                if (lenRcv == 0)
+                {
+                    if (args.skt != null)
+                    {
+                        args.skt.Shutdown(SocketShutdown.Both);
+                        args.skt.Close();
+                    }
+                    return;
+                }
                 args.netPack.bodyIndex += lenRcv;
                 if (args.netPack.bodyIndex < args.netPack.bodyLen)
                 {
@@ -242,6 +190,55 @@ class Client
                 }
 
                 args.skt.BeginReceive(args.netPack.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, new ReceiveData() { skt = args.skt, netPack = args.netPack });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void SendInfoMsg(Socket socket, LoginMsg msg)
+    {
+        string json = JsonConvert.SerializeObject(msg);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+
+        int len = data.Length;
+        byte[] pkg = new byte[len + 4];
+        byte[] head = BitConverter.GetBytes(len);
+        head.CopyTo(pkg, 0);
+        data.CopyTo(pkg, 4);
+
+        NetworkStream ns = null;
+        try
+        {
+            ns = new NetworkStream(socket);
+            if (ns.CanWrite)
+            {
+                ns.BeginWrite(
+                    pkg,
+                    0,
+                    pkg.Length,
+                    SendHandle,
+                    ns
+                );
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void SendHandle(IAsyncResult result)
+    {
+        try
+        {
+            if (result.AsyncState is NetworkStream ns)
+            {
+                ns.EndWrite(result);
+                ns.Flush();
+                ns.Close();
             }
         }
         catch (Exception e)
