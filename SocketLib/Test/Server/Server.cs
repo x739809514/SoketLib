@@ -76,57 +76,6 @@ class Server
         }
     }
 
-    // Send Info Message to Client
-    static void SendInfoMsg(Socket socket, SendMsg msg)
-    {
-        string json = JsonConvert.SerializeObject(msg);
-        byte[] data = Encoding.UTF8.GetBytes(json);
-
-        int len = data.Length;
-        byte[] pkg = new byte[len + 4];
-        byte[] head = BitConverter.GetBytes(len);
-        head.CopyTo(pkg, 0);
-        data.CopyTo(pkg, 4);
-
-        NetworkStream ns = null;
-        try
-        {
-            ns = new NetworkStream(socket);
-            if (ns.CanWrite)
-            {
-                ns.BeginWrite(
-                    pkg,
-                    0,
-                    pkg.Length,
-                    SendHandle,
-                    ns
-                );
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-    }
-
-    static void SendHandle(IAsyncResult result)
-    {
-        try
-        {
-
-            if (result.AsyncState is NetworkStream ns)
-            {
-                ns.EndWrite(result);
-                ns.Flush();
-                ns.Close();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-    }
-
     static void ASyncHeadRcv(IAsyncResult result)
     {
         try
@@ -216,12 +165,66 @@ class Server
         {
             Console.WriteLine(e.ToString());
         }
-    } 
+    }
 
     static void HandleInfoMsg(SendMsg msg)
     {
         Console.WriteLine("Client Rcv Data: " + msg.ToString());
     }
+    #endregion
+
+    #region Send
+    // Send Info Message to Client
+    static void SendInfoMsg(Socket socket, SendMsg msg)
+    {
+        string json = JsonConvert.SerializeObject(msg);
+        byte[] data = Encoding.UTF8.GetBytes(json);
+
+        int len = data.Length;
+        byte[] pkg = new byte[len + 4];
+        byte[] head = BitConverter.GetBytes(len);
+        head.CopyTo(pkg, 0);
+        data.CopyTo(pkg, 4);
+
+        NetworkStream ns = null;
+        try
+        {
+            ns = new NetworkStream(socket);
+            if (ns.CanWrite)
+            {
+                ns.BeginWrite(
+                    pkg,
+                    0,
+                    pkg.Length,
+                    SendHandle,
+                    ns
+                );
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
+    static void SendHandle(IAsyncResult result)
+    {
+        try
+        {
+
+            if (result.AsyncState is NetworkStream ns)
+            {
+                ns.EndWrite(result);
+                ns.Flush();
+                ns.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
     #endregion
 
     #region SyncReceive
