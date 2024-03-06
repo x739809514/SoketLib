@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace RXNet;
 
-class RXTool
+public class RXTool
 {
     // pack information for head length
     public static byte[] PackLenInfo(byte[] data){

@@ -6,10 +6,12 @@ namespace RXNet
     public class RXSession
     {
         private Socket skt;
+        public Action closeCB = null;
 
-        public void StartRcvData(Socket socket)
+        public void StartRcvData(Socket socket, Action callback)
         {
             skt = socket;
+            closeCB = callback;
             RXPkg pkg = new RXPkg();
             socket.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, pkg);
         }
@@ -25,11 +27,7 @@ namespace RXNet
                 if (lenRcv == 0)
                 {
                     Console.WriteLine("Server is offline");
-                    if (skt != null)
-                    {
-                        skt.Shutdown(SocketShutdown.Both);
-                        skt.Close();
-                    }
+                    CloseSession();
                     return;
                 }
                 else
@@ -65,6 +63,7 @@ namespace RXNet
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                CloseSession();
             }
         }
 
@@ -106,6 +105,7 @@ namespace RXNet
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                CloseSession();
             }
         }
 
@@ -141,6 +141,29 @@ namespace RXNet
 
         }
 
+        public void SendMsg(byte[] msg)
+        {
+            NetworkStream ns = null;
+            try
+            {
+                ns = new NetworkStream(skt);
+                if (ns.CanWrite)
+                {
+                    ns.BeginWrite(
+                        msg,
+                        0,
+                        msg.Length,
+                        SendCB,
+                        ns
+                    );
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
         private void SendCB(IAsyncResult result)
         {
             try
@@ -158,6 +181,16 @@ namespace RXNet
             }
         }
 
+        public void CloseSession()
+        {
+            closeCB?.Invoke();
+
+            if (skt != null)
+            {
+                skt.Shutdown(SocketShutdown.Both);
+                skt.Close();
+            }
+        }
     }
 }
 

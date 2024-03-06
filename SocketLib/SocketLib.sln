@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetWorkBasic", "NetWorkBasi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RXNet", "RXNet\RXNet.csproj", "{0DC2B853-D9BA-4FE0-B31A-4222F2607908}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEServer", "TEServer\TEServer.csproj", "{EE89BD53-9513-4180-81FE-056D4F11A2DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEClient", "TEClient\TEClient.csproj", "{41C0880F-1D6C-476D-B396-DDACB629FF3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0DC2B853-D9BA-4FE0-B31A-4222F2607908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DC2B853-D9BA-4FE0-B31A-4222F2607908}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DC2B853-D9BA-4FE0-B31A-4222F2607908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE89BD53-9513-4180-81FE-056D4F11A2DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE89BD53-9513-4180-81FE-056D4F11A2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE89BD53-9513-4180-81FE-056D4F11A2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE89BD53-9513-4180-81FE-056D4F11A2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41C0880F-1D6C-476D-B396-DDACB629FF3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41C0880F-1D6C-476D-B396-DDACB629FF3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41C0880F-1D6C-476D-B396-DDACB629FF3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41C0880F-1D6C-476D-B396-DDACB629FF3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

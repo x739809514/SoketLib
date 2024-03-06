@@ -1,0 +1,12 @@
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/bin/Debug/net7.0/RXNet.deps.json
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/bin/Debug/net7.0/RXNet.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/bin/Debug/net7.0/RXNet.pdb
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.csproj.AssemblyReference.cache
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.GeneratedMSBuildEditorConfig.editorconfig
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.AssemblyInfoInputs.cache
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.AssemblyInfo.cs
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.csproj.CoreCompileInputs.cache
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/refint/RXNet.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.pdb
+/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/ref/RXNet.dll

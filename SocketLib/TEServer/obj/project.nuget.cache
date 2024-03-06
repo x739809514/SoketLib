@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "q/C2yM/DNFhGybnAAqzmc4kN9+hFPCakT5RB+B/8pSOcuyvC2aNPrJOKyF9mfA7+yxIcgL1gT/ZJx1i8GYQKWQ==",
+  "success": true,
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEServer/TEServer.csproj",
+  "expectedPackageFiles": [
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

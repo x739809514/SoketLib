@@ -6,7 +6,7 @@ namespace RXNet;
 public class RXSocket
 {
     private Socket socket;
-    private RXSession session;
+    public RXSession session;
     private List<RXSession> sessionList;
 
     public RXSocket()
@@ -20,6 +20,7 @@ public class RXSocket
     {
         try
         {
+            Console.WriteLine("Client Start....");
             socket.BeginConnect(new IPEndPoint(IPAddress.Parse(ip), port), ConnectionHandle, socket);
         }
         catch (Exception e)
@@ -29,15 +30,15 @@ public class RXSocket
 
     }
 
-    private void ConnectionHandle(IAsyncResult result)
+    public void ConnectionHandle(IAsyncResult result)
     {
         try
         {
             Socket skt = (Socket)result.AsyncState;
             skt.EndConnect(result);
-            Console.WriteLine("Connect Success");
+            Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
             session = new RXSession();
-            session.StartRcvData(skt);
+            session.StartRcvData(skt, null);
         }
         catch (Exception e)
         {
@@ -51,6 +52,7 @@ public class RXSocket
     {
         try
         {
+            Console.WriteLine("Server Start...");
             socket.Bind(new IPEndPoint(IPAddress.Parse(ip), port));
             socket.Listen(backLog);
             sessionList = new List<RXSession>();
@@ -62,19 +64,57 @@ public class RXSocket
         }
     }
 
-    private void ServerConnectionHandle(IAsyncResult result)
+    public void ServerConnectionHandle(IAsyncResult result)
     {
         Socket skt = (Socket)result.AsyncState;
-        try{
+        try
+        {
+            Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
             Socket clientSkt = skt.EndAccept(result);
             session = new RXSession();
             sessionList.Add(session);
-            session.StartRcvData(clientSkt);
-            skt.BeginAccept(ServerConnectionHandle,socket);
+            session.StartRcvData(clientSkt, () =>
+            {
+                if (sessionList.Contains(session))
+                    sessionList.Remove(session);
+            });
+            skt.BeginAccept(ServerConnectionHandle, socket);
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+        }
+    }
+
+    public List<RXSession> ReturnSession(){
+        return sessionList;
+    }
+
+    public void CloseClient()
+    {
+        if (session != null)
+        {
+            session.CloseSession();
+            session = null;
+        }
+        if (socket != null)
+        {
+            socket = null;
+        }
+    }
+
+    public void CloseServer()
+    {
+        for (int i = 0; i < sessionList.Count; i++)
+        {
+            sessionList[i].CloseSession();
+        }
+
+        sessionList = null;
+        if (socket != null)
+        {
+            socket.Close();
+            socket = null;
         }
     }
     #endregion
