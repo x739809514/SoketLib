@@ -8,8 +8,7 @@
     ".NETCoreApp,Version=v7.0": {
       "TEClient/1.0.0": {
         "dependencies": {
-          "Newtonsoft.Json": "13.0.3",
-          "RXNet": "1.0.0.0"
+          "RXNet": "1.0.0"
         },
         "runtime": {
           "TEClient.dll": {}
@@ -23,12 +22,12 @@
           }
         }
       },
-      "RXNet/1.0.0.0": {
+      "RXNet/1.0.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
         "runtime": {
-          "RXNet.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
+          "RXNet.dll": {}
         }
       }
     }
@@ -46,8 +45,8 @@
       "path": "newtonsoft.json/13.0.3",
       "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
     },
-    "RXNet/1.0.0.0": {
-      "type": "reference",
+    "RXNet/1.0.0": {
+      "type": "project",
       "serviceable": false,
       "sha512": ""
     }

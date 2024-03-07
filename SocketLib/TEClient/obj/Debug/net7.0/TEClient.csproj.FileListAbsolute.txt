@@ -16,3 +16,4 @@
 /Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/obj/Debug/net7.0/TEClient.genruntimeconfig.cache
 /Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/obj/Debug/net7.0/ref/TEClient.dll
 /Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/bin/Debug/net7.0/Newtonsoft.Json.dll
+/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/bin/Debug/net7.0/RXNet.pdb

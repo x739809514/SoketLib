@@ -14,6 +14,19 @@
             "related": ".xml"
           }
         }
+      },
+      "RXNet/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "compile": {
+          "bin/placeholder/RXNet.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/RXNet.dll": {}
+        }
       }
     }
   },
@@ -47,11 +60,16 @@
         "newtonsoft.json.nuspec",
         "packageIcon.png"
       ]
+    },
+    "RXNet/1.0.0": {
+      "type": "project",
+      "path": "../RXNet/RXNet.csproj",
+      "msbuildProject": "../RXNet/RXNet.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "Newtonsoft.Json >= 13.0.3"
+      "RXNet >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -78,7 +96,11 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj": {
+              "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -90,12 +112,6 @@
     "frameworks": {
       "net7.0": {
         "targetAlias": "net7.0",
-        "dependencies": {
-          "Newtonsoft.Json": {
-            "target": "Package",
-            "version": "[13.0.3, )"
-          }
-        },
         "imports": [
           "net461",
           "net462",

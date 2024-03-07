@@ -4,14 +4,14 @@
     "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj": {}
   },
   "projects": {
-    "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj": {
+    "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj",
-        "projectName": "TEClient",
-        "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj",
+        "projectUniqueName": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj",
+        "projectName": "RXNet",
+        "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj",
         "packagesPath": "/Users/innovation/.nuget/packages/",
-        "outputPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/obj/",
+        "outputPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/innovation/.nuget/NuGet/NuGet.Config"
@@ -43,6 +43,63 @@
               "version": "[13.0.3, )"
             }
           },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.400/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj",
+        "projectName": "TEClient",
+        "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj",
+        "packagesPath": "/Users/innovation/.nuget/packages/",
+        "outputPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/innovation/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj": {
+                "projectPath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/RXNet.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
           "imports": [
             "net461",
             "net462",

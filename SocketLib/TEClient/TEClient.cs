@@ -17,7 +17,7 @@ public class RXClient
                 client.CloseClient();
                 break;
             }
-            TEMsg msg = new TEMsg() { info = str };
+            HelloMsg msg = new HelloMsg() { info = str };
             var jsonData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             var data = RXTool.PackLenInfo(jsonData);
             client.session.SendMsg(data);

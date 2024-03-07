@@ -16,7 +16,7 @@ public class TEServer
                 server.CloseServer();
                 break;
             }
-            TEMSg msg = new TEMSg() { info = str };
+            HelloMsg msg = new HelloMsg() { info = str };
             var sessions = server.ReturnSession();
             for (int i = 0; i < sessions.Count; i++)
             {

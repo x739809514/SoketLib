@@ -28,6 +28,6 @@ public class RXPkg
         headIndex = 0;
         bodyIndex = 0;
         bodyLen = 0;
-        bodyBuff = null;
+        Array.Clear(bodyBuff);
     }
 }
