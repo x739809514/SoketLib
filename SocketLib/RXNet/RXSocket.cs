@@ -3,11 +3,11 @@ using System.Net.Sockets;
 
 namespace RXNet;
 
-public class RXSocket
+public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
 {
     private Socket socket;
-    public RXSession session;
-    private List<RXSession> sessionList;
+    public T session;
+    private List<T> sessionList;
 
     public RXSocket()
     {
@@ -37,7 +37,7 @@ public class RXSocket
             Socket skt = (Socket)result.AsyncState;
             skt.EndConnect(result);
             Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
-            session = new RXSession();
+            session = new T();
             session.StartRcvData(skt, null);
         }
         catch (Exception e)
@@ -55,7 +55,7 @@ public class RXSocket
             Console.WriteLine("Server Start...");
             socket.Bind(new IPEndPoint(IPAddress.Parse(ip), port));
             socket.Listen(backLog);
-            sessionList = new List<RXSession>();
+            sessionList = new List<T>();
             socket.BeginAccept(ServerConnectionHandle, socket);
         }
         catch (Exception e)
@@ -71,7 +71,7 @@ public class RXSocket
         {
             Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
             Socket clientSkt = skt.EndAccept(result);
-            session = new RXSession();
+            session = new T();
             sessionList.Add(session);
             session.StartRcvData(clientSkt, () =>
             {
@@ -86,7 +86,7 @@ public class RXSocket
         }
     }
 
-    public List<RXSession> ReturnSession(){
+    public List<T> ReturnSession(){
         return sessionList;
     }
 

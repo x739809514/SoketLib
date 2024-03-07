@@ -1,0 +1,15 @@
+D:\A工作区\SocketLib\SocketLib\RXMessage\bin\Debug\net7.0\RXProtocol.deps.json
+D:\A工作区\SocketLib\SocketLib\RXMessage\bin\Debug\net7.0\RXProtocol.dll
+D:\A工作区\SocketLib\SocketLib\RXMessage\bin\Debug\net7.0\RXProtocol.pdb
+D:\A工作区\SocketLib\SocketLib\RXMessage\bin\Debug\net7.0\RXNet.dll
+D:\A工作区\SocketLib\SocketLib\RXMessage\bin\Debug\net7.0\RXNet.pdb
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.csproj.AssemblyReference.cache
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.GeneratedMSBuildEditorConfig.editorconfig
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.AssemblyInfoInputs.cache
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.AssemblyInfo.cs
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.csproj.CoreCompileInputs.cache
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.csproj.CopyComplete
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.dll
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\refint\RXProtocol.dll
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\RXProtocol.pdb
+D:\A工作区\SocketLib\SocketLib\RXMessage\obj\Debug\net7.0\ref\RXProtocol.dll

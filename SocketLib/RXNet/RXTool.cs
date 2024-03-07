@@ -19,12 +19,12 @@ public class RXTool
     }
 
 
-    public static RXMsg DeSerializeData(byte[] dat)
+    public static K DeSerializeData<K>(byte[] dat) where K : RXMsg
     {
         try
         {
             string data = Encoding.UTF8.GetString(dat);
-            RXMsg msg = JsonConvert.DeserializeObject<RXMsg>(data);
+            K msg = JsonConvert.DeserializeObject<K>(data);
             if (msg != null)
             {
                 return msg;
@@ -44,7 +44,7 @@ public class RXTool
 
     }
 
-    public static byte[] SerializeData(RXMsg msg)
+    public static byte[] SerializeData<K>(K msg) where K : RXMsg
     {
         try
         {

@@ -3,7 +3,7 @@ namespace RXNet;
 [Serializable]
 public class RXMsg
 {
-
+    public int cmd;
 }
 
 [Serializable]

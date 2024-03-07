@@ -10,3 +10,15 @@
 /Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/refint/RXNet.dll
 /Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/RXNet.pdb
 /Users/innovation/CodePlace/SocketLib/SocketLib/RXNet/obj/Debug/net7.0/ref/RXNet.dll
+D:\A工作区\SocketLib\SocketLib\RXNet\bin\Debug\net7.0\RXNet.deps.json
+D:\A工作区\SocketLib\SocketLib\RXNet\bin\Debug\net7.0\RXNet.dll
+D:\A工作区\SocketLib\SocketLib\RXNet\bin\Debug\net7.0\RXNet.pdb
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.csproj.AssemblyReference.cache
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.GeneratedMSBuildEditorConfig.editorconfig
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.AssemblyInfoInputs.cache
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.AssemblyInfo.cs
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.csproj.CoreCompileInputs.cache
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.dll
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\refint\RXNet.dll
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\RXNet.pdb
+D:\A工作区\SocketLib\SocketLib\RXNet\obj\Debug\net7.0\ref\RXNet.dll

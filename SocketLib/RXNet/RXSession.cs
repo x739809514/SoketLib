@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace RXNet
 {
-    public class RXSession
+    public class RXSession<K> where K : RXMsg
     {
         private Socket skt;
         public Action closeCB = null;
@@ -12,6 +12,7 @@ namespace RXNet
         {
             skt = socket;
             closeCB = callback;
+            OnConnectSuccess();
             RXPkg pkg = new RXPkg();
             socket.BeginReceive(pkg.headBuff, 0, pkg.headLen, SocketFlags.None, ASyncHeadRcv, pkg);
         }
@@ -96,8 +97,8 @@ namespace RXNet
                 }
                 else
                 {
-                    RXMsg sendMsg = RXTool.DeSerializeData(pkg.bodyBuff);
-                    HandleMessage(sendMsg);
+                    RXMsg sendMsg = RXTool.DeSerializeData<K>(pkg.bodyBuff);
+                    OnHandleMessage(sendMsg);
                     pkg.ResetData();
                     skt.BeginReceive(pkg.bodyBuff, 0, 4, SocketFlags.None, ASyncHeadRcv, pkg);
                 }
@@ -109,14 +110,9 @@ namespace RXNet
             }
         }
 
-        private void HandleMessage(RXMsg msg)
+        public void SendMsg<K>(K msg) where K : RXMsg
         {
-            Console.WriteLine(msg.ToString());
-        }
-
-        public void SendMsg(RXMsg msg)
-        {
-            byte[] data = RXTool.SerializeData(msg);
+            byte[] data = RXTool.SerializeData<K>(msg);
             byte[] pkg = RXTool.PackLenInfo(data);
 
             NetworkStream ns = null;
@@ -190,7 +186,26 @@ namespace RXNet
                 skt.Shutdown(SocketShutdown.Both);
                 skt.Close();
             }
+            OnConnectClose();
         }
+
+        #region
+
+        protected virtual void OnConnectSuccess()
+        {
+
+        }
+
+        protected virtual void OnConnectClose()
+        {
+
+        }
+
+        protected virtual void OnHandleMessage(RXMsg msg)
+        {
+            
+        }
+        #endregion
     }
 }
 

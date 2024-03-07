@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="..\RXMessage\RXProtocol.csproj" />
     <ProjectReference Include="..\RXNet\RXNet.csproj" />
   </ItemGroup>
   <PropertyGroup>
