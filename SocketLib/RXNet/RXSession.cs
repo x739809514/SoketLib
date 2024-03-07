@@ -27,7 +27,7 @@ namespace RXNet
                 int lenRcv = skt.EndReceive(result);
                 if (lenRcv == 0)
                 {
-                    Console.WriteLine("Server is offline");
+                    RXTool.Log("Server is offline", LogEnum.Warn);
                     CloseSession();
                     return;
                 }
@@ -63,7 +63,7 @@ namespace RXNet
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                RXTool.Log(e.ToString(), LogEnum.Error);
                 CloseSession();
             }
         }
@@ -105,7 +105,7 @@ namespace RXNet
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                RXTool.Log(e.ToString(), LogEnum.Error);
                 CloseSession();
             }
         }
@@ -132,7 +132,7 @@ namespace RXNet
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                RXTool.Log(e.ToString(), LogEnum.Error);
             }
 
         }
@@ -156,7 +156,7 @@ namespace RXNet
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                RXTool.Log(e.ToString(), LogEnum.Error);
             }
         }
 
@@ -173,7 +173,7 @@ namespace RXNet
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                RXTool.Log(e.ToString(), LogEnum.Error);
             }
         }
 
@@ -203,7 +203,7 @@ namespace RXNet
 
         protected virtual void OnHandleMessage(RXMsg msg)
         {
-            
+
         }
         #endregion
     }

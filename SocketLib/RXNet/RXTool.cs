@@ -7,8 +7,11 @@ namespace RXNet;
 
 public class RXTool
 {
+    public static Action<String, LogEnum> logActoin;
+    public static bool isLog = true;
     // pack information for head length
-    public static byte[] PackLenInfo(byte[] data){
+    public static byte[] PackLenInfo(byte[] data)
+    {
         int len = data.Length;
         byte[] pkg = new byte[len + 4];
         byte[] head = BitConverter.GetBytes(len);
@@ -31,17 +34,15 @@ public class RXTool
             }
             else
             {
-                Console.WriteLine("Deserialize failed");
+                RXTool.Log("Deserialize failed", LogEnum.Error);
                 return null;
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            RXTool.Log(e.ToString(), LogEnum.Error);
             return null;
         }
-
-
     }
 
     public static byte[] SerializeData<K>(K msg) where K : RXMsg
@@ -53,10 +54,44 @@ public class RXTool
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            RXTool.Log(e.ToString(), LogEnum.Error);
             return null;
         }
 
     }
 
+    public static void Log(string msg, LogEnum logEnum)
+    {
+        if (isLog == false) return;
+        msg = DateTime.Now.ToLongTimeString() + ">> " + msg;
+
+        logActoin?.Invoke(msg, logEnum);
+
+        switch (logEnum)
+        {
+            case LogEnum.None:
+                Console.WriteLine(msg);
+                break;
+            case LogEnum.Error:
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(msg);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                break;
+            case LogEnum.Warn:
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine(msg);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                break;
+            default:
+                Console.WriteLine(msg);
+                break;
+        }
+    }
+}
+
+public enum LogEnum
+{
+    None = 0,
+    Error = 1,
+    Warn = 2,
 }

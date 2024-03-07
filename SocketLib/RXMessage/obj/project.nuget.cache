@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "zaumgTT8FIqYmneigvsaDGK9NjoQJdfql7vpBWiF9DAj7eFUrAWBQIIGRxaULUoW+uX/PojOLoNokGYOe4WAZQ==",
+  "dgSpecHash": "J5Qoj2OoZc32Y0LLW+c64miV9+oeLpTDJ/jufc+v+af6WlN56yUOPfY7Ok58NkLJh7huIHcV+cVL5KoJWItURA==",
   "success": true,
-  "projectFilePath": "D:\\A工作区\\SocketLib\\SocketLib\\RXMessage\\RXProtocol.csproj",
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/RXMessage/RXProtocol.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Administrator\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

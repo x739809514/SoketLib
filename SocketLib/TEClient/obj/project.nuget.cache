@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "sB3kJ+nXIAQ/HETl1IzPZMPxAFq5L2Q0bYoWhLcS6ERpeNTUvBPBmjZd2yicu+E7Iv33YGYyHcpluTmvWdOyFg==",
+  "dgSpecHash": "/lGbIL1oEiv7ZW+OW6ObP2Gtlh+l/2TsNNYcUJhVxrwxnUQKO7h7pH/8Jq3FWbp3o9OpevGeD1txyTTzMrK9Xg==",
   "success": true,
-  "projectFilePath": "D:\\A工作区\\SocketLib\\SocketLib\\TEClient\\TEClient.csproj",
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEClient/TEClient.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Administrator\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }

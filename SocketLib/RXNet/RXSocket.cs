@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace RXNet;
 
-public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
+public class RXSocket<T, k> where T : RXSession<k>, new() where k : RXMsg
 {
     private Socket socket;
     public T session;
@@ -20,12 +20,12 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
     {
         try
         {
-            Console.WriteLine("Client Start....");
+            RXTool.Log("Client Start....", LogEnum.None);
             socket.BeginConnect(new IPEndPoint(IPAddress.Parse(ip), port), ConnectionHandle, socket);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            RXTool.Log(e.Message, LogEnum.Error);
         }
 
     }
@@ -36,13 +36,13 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
         {
             Socket skt = (Socket)result.AsyncState;
             skt.EndConnect(result);
-            Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
+            RXTool.Log("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId, LogEnum.None);
             session = new T();
             session.StartRcvData(skt, null);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            RXTool.Log(e.Message, LogEnum.Error);
         }
     }
     #endregion
@@ -52,7 +52,7 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
     {
         try
         {
-            Console.WriteLine("Server Start...");
+            RXTool.Log("Server Start...", LogEnum.None);
             socket.Bind(new IPEndPoint(IPAddress.Parse(ip), port));
             socket.Listen(backLog);
             sessionList = new List<T>();
@@ -60,7 +60,7 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            RXTool.Log(e.Message, LogEnum.Error);
         }
     }
 
@@ -69,7 +69,7 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
         Socket skt = (Socket)result.AsyncState;
         try
         {
-            Console.WriteLine("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId);
+            RXTool.Log("Connect Success! Current Thread is: " + Thread.CurrentThread.ManagedThreadId, LogEnum.None);
             Socket clientSkt = skt.EndAccept(result);
             session = new T();
             sessionList.Add(session);
@@ -82,11 +82,12 @@ public class RXSocket<T,k> where T : RXSession<k>, new() where k : RXMsg
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            RXTool.Log(e.Message, LogEnum.Error);
         }
     }
 
-    public List<T> ReturnSession(){
+    public List<T> ReturnSession()
+    {
         return sessionList;
     }
 

@@ -19,7 +19,7 @@ namespace TEClient
             RpsInfo info = netMsg.RpsInfo;
             if (info != null)
             {
-                Console.WriteLine("isSuccess is: " + info.isSuccess);
+                RXTool.Log("isSuccess is: " + info.isSuccess,LogEnum.None);
             }
 
         }

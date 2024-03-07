@@ -19,7 +19,7 @@ namespace TEServer
             ReqInfo info = netMsg.ReqInfo;
             if (info != null)
             {
-                Console.WriteLine("server ID is: " + info.serverID + " name is: " + info.name + " port is: " + info.port);
+                RXTool.Log("server ID is: " + info.serverID + "\nname is: " + info.name + "\nport is: " + info.port, LogEnum.None);
             }
 
         }

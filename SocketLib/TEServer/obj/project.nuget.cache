@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "3T0+ogT9GfkSv1AuOiHmdO5yas1fEsb3LXEUUnOKODOMuN3JsdenMV/alxOg71te88v8SfUwhW9ja5sg0GBUmQ==",
+  "dgSpecHash": "lZwy4iV9u5KeVVNQcBekvx41qFMq3O1gdZQJAd09YoQTkOVp0FERee72IpxGAVVDR5wLRgSBm3ZtDv1g33E9tQ==",
   "success": true,
-  "projectFilePath": "D:\\A工作区\\SocketLib\\SocketLib\\TEServer\\TEServer.csproj",
+  "projectFilePath": "/Users/innovation/CodePlace/SocketLib/SocketLib/TEServer/TEServer.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Administrator\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "/Users/innovation/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }
